@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ContentView {
   @ObservedObject var viewModel = ContentViewModel()
+  @State var showFileChooser = false
 }
 
 extension ContentView: View {
@@ -33,14 +34,25 @@ extension ContentView: View {
 
         HStack {
           Button("Play") {
-            viewModel.handle(.load)
             viewModel.handle(.play)
           }
 
           Button("Stop") {
             viewModel.handle(.stop)
           }
+
+          Button("Select MOD") {
+            let panel = NSOpenPanel()
+            panel.allowsMultipleSelection = false
+            panel.canChooseDirectories = false
+            if panel.runModal() == .OK {
+              viewModel.fileURL = panel.url
+              viewModel.handle(.load)
+            }
+          }
         }
+
+
       }
       .padding()
     }

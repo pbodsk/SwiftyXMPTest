@@ -113,9 +113,7 @@ class ModPlayer {
     }
   }
 
-  func load() {
-    let url = URL(fileURLWithPath: "/Users/peter/Downloads/enigma.mod")
-
+  func load(url: URL) {
     do {
       try ModPlayer.swiftyXMP.load(url)
       moduleInfoSubject.send(ModPlayer.swiftyXMP.moduleInfo())

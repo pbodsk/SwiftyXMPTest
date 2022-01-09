@@ -21,6 +21,7 @@ class ContentViewModel: ObservableObject {
 
   private let modPlayer = ModPlayer()
   private var subscriptions = Set<AnyCancellable>()
+  public var fileURL: URL?
 
   @Published var moduleName: String?
   @Published var durationString: String?
@@ -54,7 +55,9 @@ class ContentViewModel: ObservableObject {
   func handle(_ action: Action) {
     switch action {
     case .load:
-      modPlayer.load()
+      if let fileURL = fileURL {
+        modPlayer.load(url: fileURL)
+      }
       modPlayer.initPlayer()
     case .play:
       modPlayer.play()
