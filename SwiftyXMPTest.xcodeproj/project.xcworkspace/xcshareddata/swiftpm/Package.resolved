@@ -1,0 +1,16 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "SwiftyXMP",
+        "repositoryURL": "https://github.com/pbodsk/swifty-xmp",
+        "state": {
+          "branch": "main",
+          "revision": "054c83daa145a874d05f06c6db79faf105eb949b",
+          "version": null
+        }
+      }
+    ]
+  },
+  "version": 1
+}
