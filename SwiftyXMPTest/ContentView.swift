@@ -11,7 +11,6 @@ struct ContentView {
   @ObservedObject var viewModel = ContentViewModel()
 }
 
-
 extension ContentView: View {
     var body: some View {
       VStack {
@@ -24,6 +23,12 @@ extension ContentView: View {
           Text("Duration:")
           Spacer()
           Text(viewModel.durationString ?? "")
+        }
+        HStack {
+          Text("Current time:")
+          Spacer()
+          Text(viewModel.currentTimeString ?? "")
+            .font(.system(.body, design: .monospaced).monospacedDigit())
         }
 
         HStack {

@@ -61,9 +61,9 @@ class ModPlayer {
   private var moduleInfoSubject = PassthroughSubject<XMPModuleInfo, Never>()
 
   public var frameInfoPublisher: AnyPublisher<XMPFrameInfo, Never> {
-    frameInfoSubject.eraseToAnyPublisher()
+    ModPlayer.frameInfoSubject.eraseToAnyPublisher()
   }
-  private var frameInfoSubject = PassthroughSubject<XMPFrameInfo, Never>()
+  private static var frameInfoSubject = PassthroughSubject<XMPFrameInfo, Never>()
 
   init() {
     self.playerState = PlayerState(bufferByteSize: kQueueSize)
@@ -194,7 +194,7 @@ class ModPlayer {
     var status: Int32 = 0
     do {
       let frameInfo = try ModPlayer.swiftyXMP.playFrame()
-      frameInfoSubject.send(frameInfo)
+      ModPlayer.frameInfoSubject.send(frameInfo)
       if frameInfo.loopCount != 0 {
         print("something here")
         status = -1
@@ -219,7 +219,7 @@ class ModPlayer {
     var status = 0
     do {
       var frameInfo = try ModPlayer.swiftyXMP.playFrame()
-      //frameInfoSubject.send(frameInfo)
+      ModPlayer.frameInfoSubject.send(frameInfo)
       if frameInfo.loopCount != 0 {
         print("something here")
         status = -1

@@ -24,9 +24,11 @@ class ContentViewModel: ObservableObject {
 
   @Published var moduleName: String?
   @Published var durationString: String?
+  @Published var currentTimeString: String?
 
   init() {
     modPlayer.moduleInfoPublisher
+      .receive(on: DispatchQueue.main)
       .sink(receiveValue: { [weak self] moduleInfo in
         self?.moduleName = moduleInfo.module.name
         let durationMin = (moduleInfo.sequenceData.duration + 500) / 60000
@@ -36,8 +38,15 @@ class ContentViewModel: ObservableObject {
       .store(in: &subscriptions)
 
     modPlayer.frameInfoPublisher
+      .receive(on: DispatchQueue.main)
       .sink(receiveValue: { [weak self] frameInfo in
-        print(frameInfo.time)
+        let normalizedTime = frameInfo.time / 100
+        let hours = (normalizedTime / (60 * 600))
+        let minutes = (normalizedTime / 600) % 60
+        let seconds = (normalizedTime / 10) % 60
+        let miliseconds = normalizedTime % 10
+
+        self?.currentTimeString = String(format: "%3d:%02d:%02d.%d", hours, minutes, seconds, miliseconds)
       })
       .store(in: &subscriptions)
   }
