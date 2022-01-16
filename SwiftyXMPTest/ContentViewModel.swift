@@ -26,6 +26,8 @@ class ContentViewModel: ObservableObject {
   @Published var moduleName: String?
   @Published var durationString: String?
   @Published var currentTimeString: String?
+  @Published var totalTime: Float = 100.0
+  @Published var currentTime: Float = 0.0
 
   init() {
     modPlayer.moduleInfoPublisher
@@ -35,6 +37,7 @@ class ContentViewModel: ObservableObject {
         let durationMin = (moduleInfo.sequenceData.duration + 500) / 60000
         let durationSec = ((moduleInfo.sequenceData.duration + 500) / 1000) % 60
         self?.durationString = "\(durationMin):\(durationSec)"
+        self?.totalTime = Float(moduleInfo.sequenceData.duration)
       })
       .store(in: &subscriptions)
 
@@ -48,6 +51,7 @@ class ContentViewModel: ObservableObject {
         let miliseconds = normalizedTime % 10
 
         self?.currentTimeString = String(format: "%3d:%02d:%02d.%d", hours, minutes, seconds, miliseconds)
+        self?.currentTime = Float(frameInfo.time)
       })
       .store(in: &subscriptions)
   }
@@ -64,5 +68,15 @@ class ContentViewModel: ObservableObject {
     case .stop:
       modPlayer.stop()
     }
+  }
+
+  func connect(with playerSettings: PlayerSettings) {
+    playerSettings.fileSelectedSubject
+      .sink(receiveValue: { selectedFileURL in
+        self.fileURL = selectedFileURL
+        self.handle(.load)
+      })
+      .store(in: &subscriptions)
+
   }
 }

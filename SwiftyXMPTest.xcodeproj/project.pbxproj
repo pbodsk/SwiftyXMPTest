@@ -14,6 +14,7 @@
 		D0319FE82781EA6800CA7641 /* SwiftyXMP in Frameworks */ = {isa = PBXBuildFile; productRef = D0319FE72781EA6800CA7641 /* SwiftyXMP */; };
 		D0319FEA2781EA9C00CA7641 /* ModPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0319FE92781EA9C00CA7641 /* ModPlayer.swift */; };
 		D0319FEC2789E78300CA7641 /* ContentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0319FEB2789E78300CA7641 /* ContentViewModel.swift */; };
+		D0AE8CF827945C4800DCC08A /* PlayerSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0AE8CF727945C4800DCC08A /* PlayerSettings.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -25,6 +26,7 @@
 		D0319FDE2781E7E300CA7641 /* SwiftyXMPTest.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SwiftyXMPTest.entitlements; sourceTree = "<group>"; };
 		D0319FE92781EA9C00CA7641 /* ModPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModPlayer.swift; sourceTree = "<group>"; };
 		D0319FEB2789E78300CA7641 /* ContentViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentViewModel.swift; sourceTree = "<group>"; };
+		D0AE8CF727945C4800DCC08A /* PlayerSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerSettings.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,6 +62,7 @@
 			isa = PBXGroup;
 			children = (
 				D0319FD52781E7E100CA7641 /* SwiftyXMPTestApp.swift */,
+				D0AE8CF727945C4800DCC08A /* PlayerSettings.swift */,
 				D0319FD72781E7E100CA7641 /* ContentView.swift */,
 				D0319FEB2789E78300CA7641 /* ContentViewModel.swift */,
 				D0319FE92781EA9C00CA7641 /* ModPlayer.swift */,
@@ -165,6 +168,7 @@
 				D0319FD82781E7E100CA7641 /* ContentView.swift in Sources */,
 				D0319FD62781E7E100CA7641 /* SwiftyXMPTestApp.swift in Sources */,
 				D0319FEA2781EA9C00CA7641 /* ModPlayer.swift in Sources */,
+				D0AE8CF827945C4800DCC08A /* PlayerSettings.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

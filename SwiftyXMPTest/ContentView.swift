@@ -5,61 +5,55 @@
 //  Created by Peter Bødskov on 02/01/2022.
 //
 
+import UniformTypeIdentifiers
 import SwiftUI
 
 struct ContentView {
   @ObservedObject var viewModel = ContentViewModel()
-  @State var showFileChooser = false
+  @ObservedObject var playerSettings: PlayerSettings
 }
 
 extension ContentView: View {
-    var body: some View {
-      VStack {
-        HStack {
-          Text("Name:")
-          Spacer()
-          Text(viewModel.moduleName ?? "")
-        }
-        HStack {
-          Text("Duration:")
-          Spacer()
-          Text(viewModel.durationString ?? "")
-        }
-        HStack {
-          Text("Current time:")
-          Spacer()
-          Text(viewModel.currentTimeString ?? "")
-            .font(.system(.body, design: .monospaced).monospacedDigit())
-        }
-
-        HStack {
-          Button("Play") {
-            viewModel.handle(.play)
-          }
-
-          Button("Stop") {
-            viewModel.handle(.stop)
-          }
-
-          Button("Select MOD") {
-            let panel = NSOpenPanel()
-            panel.allowsMultipleSelection = false
-            panel.canChooseDirectories = false
-            if panel.runModal() == .OK {
-              viewModel.fileURL = panel.url
-              viewModel.handle(.load)
-            }
-          }
-        }
-
-
+  var body: some View {
+    VStack {
+      HStack {
+        Text("Name:")
+        Spacer()
+        Text(viewModel.moduleName ?? "")
       }
-      .padding()
+      HStack {
+        Text("Duration:")
+        Spacer()
+        Text(viewModel.durationString ?? "")
+      }
+      HStack {
+        Text("Current time:")
+        Spacer()
+        Text(viewModel.currentTimeString ?? "")
+          .font(.system(.body, design: .monospaced).monospacedDigit())
+      }
+
+      ProgressView(value: viewModel.currentTime, total: viewModel.totalTime)
+
+      HStack {
+        Button(action: { viewModel.handle(.play) }) {
+          Image(systemName: "play.circle.fill")
+        }
+
+        Button(action: { viewModel.handle(.stop) }) {
+          Image(systemName: "stop.circle.fill")
+        }
+        .onAppear {
+          viewModel.connect(with: playerSettings)
+        }
+      }
     }
+    .padding()
+  }
 }
 
 struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
-    }
+  static var previews: some View {
+    ContentView(playerSettings: PlayerSettings())
+  }
 }
