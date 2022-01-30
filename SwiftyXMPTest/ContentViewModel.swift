@@ -17,6 +17,9 @@ class ContentViewModel: ObservableObject {
     case load
     case play
     case stop
+    case skipForwards
+    case skipBackwards
+    case toggleMute(channel: Int)
   }
 
   private let modPlayer = ModPlayer()
@@ -28,6 +31,11 @@ class ContentViewModel: ObservableObject {
   @Published var currentTimeString: String?
   @Published var totalTime: Float = 100.0
   @Published var currentTime: Float = 0.0
+
+  @Published var channelOneState: ModPlayer.ChannelState = .unmuted
+  @Published var channelTwoState: ModPlayer.ChannelState = .unmuted
+  @Published var channelThreeState: ModPlayer.ChannelState = .unmuted
+  @Published var channelFourState: ModPlayer.ChannelState = .unmuted
 
   init() {
     modPlayer.moduleInfoPublisher
@@ -67,6 +75,46 @@ class ContentViewModel: ObservableObject {
       modPlayer.play()
     case .stop:
       modPlayer.stop()
+    case .skipForwards:
+      modPlayer.skipForwards()
+    case .skipBackwards:
+      modPlayer.skipBackwards()
+    case .toggleMute(channel: let channel):
+      switch channel {
+      case 0:
+        do {
+          if let updatedState = try modPlayer.changeState(for: channel, to: channelOneState.toggled) {
+            channelOneState = updatedState
+          }
+        } catch {
+          print("error")
+        }
+      case 1:
+        do {
+          if let newState = try modPlayer.changeState(for: channel, to: channelTwoState.toggled) {
+            channelTwoState = newState
+          }
+        } catch {
+          print("error")
+        }
+      case 2:
+        do {
+          if let newState = try modPlayer.changeState(for: channel, to: channelThreeState.toggled) {
+            channelThreeState = newState
+          }
+        } catch {
+          print("error")
+        }
+      case 3:
+        do {
+          if let newState = try modPlayer.changeState(for: channel, to: channelFourState.toggled) {
+            channelFourState = newState
+          }
+        } catch {
+          print("error")
+        }
+      default: break
+      }
     }
   }
 

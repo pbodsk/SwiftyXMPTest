@@ -11,7 +11,6 @@ import Foundation
 import SwiftyXMP
 
 class PlayerState {
-
   var dataFormat: AudioStreamBasicDescription
   var audioQueue: AudioQueueRef!
   var buffers: [AudioQueueBufferRef?]
@@ -24,7 +23,6 @@ class PlayerState {
   private let channelsPerFrame: UInt32 = 2  //1 - mono, 2 - stereo
   private let bitsPerChannel: UInt32 = 16   //16 or 8 for XMP
   private let bytesPerChannel: UInt32 = 2
-
 
   init(bufferByteSize: UInt32) {
     self.buffers = Array<AudioQueueBufferRef?>(repeating: nil, count: 3)
@@ -48,6 +46,41 @@ class PlayerState {
 
 
 class ModPlayer {
+
+  enum ChannelState {
+    case muted
+    case unmuted
+
+    init?(xmpChannelState: XMPChannelState) {
+      switch xmpChannelState {
+      case .muted:
+        self = .muted
+      case .unmuted:
+        self = .unmuted
+      case .query:
+        return nil
+      }
+    }
+
+    var xmpChannelState: XMPChannelState {
+      switch self {
+      case .muted:
+        return .muted
+      case .unmuted:
+        return .unmuted
+      }
+    }
+
+    var toggled: ChannelState {
+      switch self {
+      case .muted:
+        return .unmuted
+      case .unmuted:
+        return .muted
+      }
+    }
+  }
+
   static var swiftyXMP = SwiftyXMP()
 
   private let kQueueSize:UInt32 = 50000
@@ -78,6 +111,7 @@ class ModPlayer {
       playerStatus.isRunning = false
       playerStatus.isValid = false
       ModPlayer.swiftyXMP.stop()
+      //ModPlayer.swiftyXMP.freeContext()
       if playerStatus.audioQueue != nil {
         let disposeStatus = AudioQueueDispose(playerStatus.audioQueue!, true)
         print("disposeStatus: \(disposeStatus)")
@@ -139,7 +173,32 @@ class ModPlayer {
   }
 
   func stop() {
-    ModPlayer.swiftyXMP.stop()
+    disposePlayer()
+  }
+
+  @discardableResult
+  func skipForwards() -> Int {
+    Int(ModPlayer.swiftyXMP.nextPosition())
+  }
+
+  @discardableResult
+  func skipBackwards() -> Int {
+    Int(ModPlayer.swiftyXMP.previousPosition())
+  }
+
+  func state(for channel: Int) -> ModPlayer.ChannelState? {
+    guard let xmpChannelState = try? ModPlayer.swiftyXMP.updateChannel(Int32(channel), to: .query)
+    else { return nil }
+    return ModPlayer.ChannelState(xmpChannelState: xmpChannelState)
+  }
+
+  func changeState(for channel: Int, to newState: ModPlayer.ChannelState) throws -> ModPlayer.ChannelState? {
+    let newXMPState = newState.xmpChannelState
+    if let _ = try ModPlayer.swiftyXMP.updateChannel(Int32(channel), to: newXMPState) {
+      return newState
+    }
+    print("WHAT THE!!")
+    return nil
   }
 
   private func audioQueueInit(playerState: inout PlayerState) -> OSStatus {
