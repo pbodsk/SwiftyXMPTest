@@ -16,10 +16,28 @@ class ContentViewModel: ObservableObject {
   enum Action {
     case load
     case play
+    case pause
     case stop
     case skipForwards
     case skipBackwards
     case toggleMute(channel: Int)
+  }
+
+  enum PlayerState {
+    case stopped
+    case playing
+    case paused
+
+    var isDisabled: Bool {
+      switch self {
+      case .stopped:
+        return true
+      case .playing:
+        return false
+      case .paused:
+        return false
+      }
+    }
   }
 
   private let modPlayer = ModPlayer()
@@ -27,25 +45,53 @@ class ContentViewModel: ObservableObject {
   public var fileURL: URL?
 
   @Published var moduleName: String?
+  @Published var type: String = ""
+  @Published var numberOfPatterns: String = ""
+  @Published var numberOfTracks: String = ""
+  @Published var tracksPerPattern: String = ""
+  @Published var numberOfInstruments: String = ""
+  @Published var numberOfSamples: String = ""
+  @Published var lengthInPatterns: String = ""
   @Published var durationString: String?
   @Published var currentTimeString: String?
   @Published var totalTime: Float = 100.0
   @Published var currentTime: Float = 0.0
+  @Published var frameTime: String = ""
+  @Published var loopCount: String = ""
+  @Published var numberOfRows: String = ""
+  @Published var numberOfVirtuelChannels: String = ""
+  @Published var pattern: String = ""
+  @Published var pos: String = ""
+  @Published var row: String = ""
+  @Published var currentSequence: String = ""
+  @Published var speed: String = ""
+  @Published var virtuelChannelsUsed: String = ""
 
   @Published var channelOneState: ModPlayer.ChannelState = .unmuted
   @Published var channelTwoState: ModPlayer.ChannelState = .unmuted
   @Published var channelThreeState: ModPlayer.ChannelState = .unmuted
   @Published var channelFourState: ModPlayer.ChannelState = .unmuted
 
+  @Published var currentPlayerState: PlayerState
+
   init() {
+    currentPlayerState = .stopped
+
     modPlayer.moduleInfoPublisher
       .receive(on: DispatchQueue.main)
       .sink(receiveValue: { [weak self] moduleInfo in
         self?.moduleName = moduleInfo.module.name
         let durationMin = (moduleInfo.sequenceData.duration + 500) / 60000
         let durationSec = ((moduleInfo.sequenceData.duration + 500) / 1000) % 60
-        self?.durationString = "\(durationMin):\(durationSec)"
+        self?.durationString = String(format: "%02d:%02d", durationMin, durationSec)
         self?.totalTime = Float(moduleInfo.sequenceData.duration)
+        self?.type = moduleInfo.module.type
+        self?.numberOfPatterns = String(moduleInfo.module.numberOfPatterns)
+        self?.numberOfTracks = String(moduleInfo.module.numberOfTracks)
+        self?.tracksPerPattern = String(moduleInfo.module.tracksPerPattern)
+        self?.numberOfInstruments = String(moduleInfo.module.numberOfInstruments)
+        self?.numberOfSamples = String(moduleInfo.module.numberOfSamples)
+        self?.lengthInPatterns = String(moduleInfo.module.lengthInPatterns)
       })
       .store(in: &subscriptions)
 
@@ -60,6 +106,17 @@ class ContentViewModel: ObservableObject {
 
         self?.currentTimeString = String(format: "%3d:%02d:%02d.%d", hours, minutes, seconds, miliseconds)
         self?.currentTime = Float(frameInfo.time)
+
+        self?.frameTime = String(frameInfo.frameTime)
+        self?.loopCount = String(frameInfo.loopCount)
+        self?.numberOfRows = String(frameInfo.numberOfRows)
+        self?.numberOfVirtuelChannels = String(frameInfo.numberOfVirtuelChannels)
+        self?.pattern = String(frameInfo.pattern)
+        self?.pos = String(frameInfo.pos)
+        self?.row = String(frameInfo.row)
+        self?.currentSequence = String(frameInfo.currentSequence)
+        self?.speed = String(frameInfo.speed)
+        self?.virtuelChannelsUsed = String(frameInfo.virtuelChannelsUsed)
       })
       .store(in: &subscriptions)
   }
@@ -71,10 +128,22 @@ class ContentViewModel: ObservableObject {
         modPlayer.load(url: fileURL)
       }
       modPlayer.initPlayer()
-    case .play:
       modPlayer.play()
+      currentPlayerState = .playing
+    case .play:
+      modPlayer.stop()
+      if currentPlayerState == .paused {
+        modPlayer.resume()
+      } else {
+        modPlayer.play()
+      }
+      currentPlayerState = .playing
+    case .pause:
+      modPlayer.pause()
+      currentPlayerState = .paused
     case .stop:
       modPlayer.stop()
+      currentPlayerState = .stopped
     case .skipForwards:
       modPlayer.skipForwards()
     case .skipBackwards:
@@ -126,5 +195,9 @@ class ContentViewModel: ObservableObject {
       })
       .store(in: &subscriptions)
 
+  }
+
+  var showPlayButton: Bool {
+    currentPlayerState == .stopped || currentPlayerState == .paused
   }
 }

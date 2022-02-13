@@ -110,14 +110,19 @@ class ModPlayer {
     if let playerStatus = playerState {
       playerStatus.isRunning = false
       playerStatus.isValid = false
+      stopPlayer()
+    }
+    //self.playerState = nil
+  }
+
+  private func stopPlayer() {
+    if let playerStatus = playerState {
       ModPlayer.swiftyXMP.stop()
-      //ModPlayer.swiftyXMP.freeContext()
       if playerStatus.audioQueue != nil {
         let disposeStatus = AudioQueueDispose(playerStatus.audioQueue!, true)
         print("disposeStatus: \(disposeStatus)")
       }
     }
-    self.playerState = nil
   }
 
   func initPlayer() {
@@ -172,8 +177,20 @@ class ModPlayer {
     }
   }
 
+  func pause() {
+    AudioQueuePause(playerState!.audioQueue!)
+  }
+
+  func resume() {
+    let status = AudioQueueStart(playerState!.audioQueue!, nil)
+    if status == 0 {
+      playerState?.isRunning = true
+    }
+  }
+
   func stop() {
-    disposePlayer()
+    stopPlayer()
+//    disposePlayer()
   }
 
   @discardableResult
