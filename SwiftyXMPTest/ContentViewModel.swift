@@ -21,6 +21,8 @@ class ContentViewModel: ObservableObject {
     case skipForwards
     case skipBackwards
     case toggleMute(channel: Int)
+    case updatePositionStart
+    case updatePositionStop
   }
 
   enum PlayerState {
@@ -54,8 +56,8 @@ class ContentViewModel: ObservableObject {
   @Published var lengthInPatterns: String = ""
   @Published var durationString: String?
   @Published var currentTimeString: String?
-  @Published var totalTime: Float = 100.0
-  @Published var currentTime: Float = 0.0
+  @Published var totalTime: Double = 100.0
+  @Published var currentTime: Double = 0.0
   @Published var frameTime: String = ""
   @Published var loopCount: String = ""
   @Published var numberOfRows: String = ""
@@ -74,6 +76,8 @@ class ContentViewModel: ObservableObject {
 
   @Published var currentPlayerState: PlayerState
 
+  private var isUpdatingPosition = false
+
   init() {
     currentPlayerState = .stopped
 
@@ -84,7 +88,7 @@ class ContentViewModel: ObservableObject {
         let durationMin = (moduleInfo.sequenceData.duration + 500) / 60000
         let durationSec = ((moduleInfo.sequenceData.duration + 500) / 1000) % 60
         self?.durationString = String(format: "%02d:%02d", durationMin, durationSec)
-        self?.totalTime = Float(moduleInfo.sequenceData.duration)
+        self?.totalTime = Double(moduleInfo.sequenceData.duration)
         self?.type = moduleInfo.module.type
         self?.numberOfPatterns = String(moduleInfo.module.numberOfPatterns)
         self?.numberOfTracks = String(moduleInfo.module.numberOfTracks)
@@ -105,8 +109,7 @@ class ContentViewModel: ObservableObject {
         let miliseconds = normalizedTime % 10
 
         self?.currentTimeString = String(format: "%3d:%02d:%02d.%d", hours, minutes, seconds, miliseconds)
-        self?.currentTime = Float(frameInfo.time)
-
+        self?.currentTime = Double(frameInfo.time)
         self?.frameTime = String(frameInfo.frameTime)
         self?.loopCount = String(frameInfo.loopCount)
         self?.numberOfRows = String(frameInfo.numberOfRows)
@@ -148,6 +151,15 @@ class ContentViewModel: ObservableObject {
       modPlayer.skipForwards()
     case .skipBackwards:
       modPlayer.skipBackwards()
+    case .updatePositionStart:
+      if !isUpdatingPosition {
+        modPlayer.pause()
+        isUpdatingPosition = true
+      }
+    case .updatePositionStop:
+      modPlayer.updateProgress(newValue: currentTime)
+      modPlayer.resume()
+      isUpdatingPosition = false
     case .toggleMute(channel: let channel):
       switch channel {
       case 0:

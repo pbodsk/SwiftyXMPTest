@@ -193,6 +193,14 @@ class ModPlayer {
 //    disposePlayer()
   }
 
+  func updateProgress(newValue: Double) {
+    do {
+      _ = try ModPlayer.swiftyXMP.seek(to: Int32(newValue))
+    } catch {
+      print(error)
+    }
+  }
+
   @discardableResult
   func skipForwards() -> Int {
     Int(ModPlayer.swiftyXMP.nextPosition())

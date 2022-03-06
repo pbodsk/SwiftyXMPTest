@@ -164,7 +164,17 @@ extension ContentView: View {
         }
       }
 
-      ProgressView(value: viewModel.currentTime, total: viewModel.totalTime)
+
+      Slider(
+        value: $viewModel.currentTime,
+        in: 0...viewModel.totalTime,
+        onEditingChanged: { updating in
+          if updating {
+            viewModel.handle(.updatePositionStart)
+          } else {
+            viewModel.handle(.updatePositionStop)
+          }
+        })
 
       HStack {
         Button(action: { viewModel.handle(.skipBackwards) }) {
