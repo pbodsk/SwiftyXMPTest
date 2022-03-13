@@ -87,7 +87,8 @@ class ModPlayer {
   private let kBufferCount:Int = 3
   var volume: Float = 1.0
   var playerState: PlayerState?
-
+  private (set) var playerIsInitialized = false
+  
   public var moduleInfoPublisher: AnyPublisher<XMPModuleInfo, Never> {
     moduleInfoSubject.eraseToAnyPublisher()
   }
@@ -106,12 +107,13 @@ class ModPlayer {
     disposePlayer()
   }
 
-  private func disposePlayer() {
+  func disposePlayer() {
     if let playerStatus = playerState {
       playerStatus.isRunning = false
       playerStatus.isValid = false
       stopPlayer()
     }
+    playerIsInitialized = false
     //self.playerState = nil
   }
 
@@ -130,26 +132,28 @@ class ModPlayer {
       print("no playerState")
       return
     }
-    var err = audioQueueInit(playerState: &playerState!)
+    let err = audioQueueInit(playerState: &playerState!)
     if err != noErr {
       print("queue init failed, error: \(err)")
       disposePlayer()
       return
     }
-
-    ModPlayer.swiftyXMP.start()
-
     AudioQueueSetParameter(playerState!.audioQueue!, AudioQueueParameterID(kAudioQueueParam_Volume), Float32(volume))
 
     // setup buffers
     for i in 0..<kBufferCount {
-      err = allocateBuffer(playerState: &playerState!, bufferPos: i)
+      let err = allocateBuffer(playerState: &playerState!, bufferPos: i)
       if err != noErr {
         print("Buffer Alloc failed. OSStatus \(err)")
         disposePlayer()
         return
       }
     }
+
+  }
+
+  func startPlayer() {
+    ModPlayer.swiftyXMP.start()
   }
 
   func load(url: URL) {

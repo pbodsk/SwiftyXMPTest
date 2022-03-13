@@ -127,14 +127,19 @@ class ContentViewModel: ObservableObject {
   func handle(_ action: Action) {
     switch action {
     case .load:
+      modPlayer.disposePlayer()
       if let fileURL = fileURL {
         modPlayer.load(url: fileURL)
       }
-      modPlayer.initPlayer()
+      if !modPlayer.playerIsInitialized {
+        (print("init"))
+        modPlayer.initPlayer()
+      }
+      modPlayer.startPlayer()
+
       modPlayer.play()
       currentPlayerState = .playing
     case .play:
-      modPlayer.stop()
       if currentPlayerState == .paused {
         modPlayer.resume()
       } else {
