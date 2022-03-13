@@ -132,7 +132,6 @@ class ContentViewModel: ObservableObject {
         modPlayer.load(url: fileURL)
       }
       if !modPlayer.playerIsInitialized {
-        (print("init"))
         modPlayer.initPlayer()
       }
       modPlayer.startPlayer()
@@ -151,6 +150,7 @@ class ContentViewModel: ObservableObject {
       currentPlayerState = .paused
     case .stop:
       modPlayer.stop()
+      clearUI()
       currentPlayerState = .stopped
     case .skipForwards:
       modPlayer.skipForwards()
@@ -212,6 +212,31 @@ class ContentViewModel: ObservableObject {
       })
       .store(in: &subscriptions)
 
+  }
+
+  private func clearUI() {
+    moduleName = ""
+    type = ""
+    numberOfPatterns = ""
+    numberOfTracks = ""
+    tracksPerPattern = ""
+    numberOfInstruments = ""
+    numberOfSamples = ""
+    lengthInPatterns = ""
+    durationString = ""
+    currentTimeString = nil
+    totalTime = 100.0
+    currentTime = 0.0
+    frameTime = ""
+    loopCount = ""
+    numberOfRows = ""
+    numberOfVirtuelChannels = ""
+    pattern = ""
+    pos = ""
+    row = ""
+    currentSequence = ""
+    speed = ""
+    virtuelChannelsUsed = ""
   }
 
   var showPlayButton: Bool {

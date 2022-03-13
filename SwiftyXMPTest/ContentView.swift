@@ -23,17 +23,8 @@ extension ContentView: View {
           Spacer()
         }
 
-        HStack {
-          Text("Name:")
-          Spacer()
-          Text(viewModel.moduleName ?? "")
-        }
-
-        HStack {
-          Text("Type:")
-          Spacer()
-          Text(viewModel.type)
-        }
+        ModInfoRow(title: "Name", content: viewModel.moduleName)
+        ModInfoRow(title: "Type", content: viewModel.type)
       }
       .padding(.bottom, 10)
 
@@ -44,65 +35,15 @@ extension ContentView: View {
           Spacer()
         }
 
-        HStack {
-          Text("Duration:")
-          Spacer()
-          Text(viewModel.durationString ?? "")
-        }
-        HStack {
-          Text("Length in Patterns:")
-          Spacer()
-          Text(viewModel.lengthInPatterns)
-        }
-
-        HStack {
-          Text("Number of Instruments:")
-          Spacer()
-          Text(viewModel.numberOfInstruments)
-            .font(.system(.body, design: .monospaced).monospacedDigit())
-        }
-
-        HStack {
-          Text("Number of Samples:")
-          Spacer()
-          Text(viewModel.numberOfSamples)
-            .font(.system(.body, design: .monospaced).monospacedDigit())
-        }
-
-
-        HStack {
-          Text("Number of Channels:")
-          Spacer()
-          Text(viewModel.numberOfVirtuelChannels)
-            .font(.system(.body, design: .monospaced).monospacedDigit())
-        }
-
-        HStack {
-          Text("Number of Rows:")
-          Spacer()
-          Text(viewModel.numberOfRows)
-            .font(.system(.body, design: .monospaced).monospacedDigit())
-        }
-        HStack {
-          Text("Number of Patterns:")
-          Spacer()
-          Text(viewModel.numberOfPatterns)
-            .font(.system(.body, design: .monospaced).monospacedDigit())
-        }
-        HStack {
-          Text("Number of Tracks:")
-          Spacer()
-          Text(viewModel.numberOfTracks)
-            .font(.system(.body, design: .monospaced).monospacedDigit())
-        }
-        HStack {
-          Text("Tracks per Pattern:")
-          Spacer()
-          Text(viewModel.tracksPerPattern)
-            .font(.system(.body, design: .monospaced).monospacedDigit())
-        }
-
-
+        ModInfoRow(title: "Duration", content: viewModel.durationString)
+        ModInfoRow(title: "Length in Patterns", content: viewModel.lengthInPatterns)
+        ModInfoRow(title: "Number of Instruments", content: viewModel.numberOfInstruments)
+        ModInfoRow(title: "Number of Samples", content: viewModel.numberOfSamples)
+        ModInfoRow(title: "Number of Channels", content: viewModel.numberOfVirtuelChannels)
+        ModInfoRow(title: "Number of Rows", content: viewModel.numberOfRows)
+        ModInfoRow(title: "Number of Patterns", content: viewModel.numberOfPatterns)
+        ModInfoRow(title: "Number of Tracks", content: viewModel.numberOfTracks)
+        ModInfoRow(title: "Tracks per Pattern", content: viewModel.tracksPerPattern)
       }
       .padding(.bottom, 10.0)
 
@@ -112,57 +53,15 @@ extension ContentView: View {
             .font(.title2)
           Spacer()
         }
-
-        HStack {
-          Text("Current time:")
-          Spacer()
-          Text(viewModel.currentTimeString ?? "")
-            .font(.system(.body, design: .monospaced).monospacedDigit())
-        }
-
-        HStack {
-          Text("Row:")
-          Spacer()
-          Text(viewModel.row)
-            .font(.system(.body, design: .monospaced).monospacedDigit())
-        }
-
-        HStack {
-          Text("Position:")
-          Spacer()
-          Text(viewModel.pos)
-            .font(.system(.body, design: .monospaced).monospacedDigit())
-        }
-
-        HStack {
-          Text("Pattern:")
-          Spacer()
-          Text(viewModel.pattern)
-            .font(.system(.body, design: .monospaced).monospacedDigit())
-        }
-
-        HStack {
-          Text("Speed:")
-          Spacer()
-          Text(viewModel.speed)
-            .font(.system(.body, design: .monospaced).monospacedDigit())
-        }
-
-        HStack {
-          Text("Loop count:")
-          Spacer()
-          Text(viewModel.loopCount)
-            .font(.system(.body, design: .monospaced).monospacedDigit())
-        }
-
-
-        HStack {
-          Text("Current Sequence:")
-          Spacer()
-          Text(viewModel.currentSequence)
-            .font(.system(.body, design: .monospaced).monospacedDigit())
-        }
+        
+        ModInfoRow(title: "Row", content: viewModel.row)
+        ModInfoRow(title: "Position", content: viewModel.pos)
+        ModInfoRow(title: "Pattern", content: viewModel.pattern)
+        ModInfoRow(title: "Speed", content: viewModel.speed)
+        ModInfoRow(title: "Loop Count", content: viewModel.loopCount)
+        ModInfoRow(title: "Current Sequence", content: viewModel.currentSequence)
       }
+
 
 
       Slider(
@@ -174,7 +73,11 @@ extension ContentView: View {
           } else {
             viewModel.handle(.updatePositionStop)
           }
-        })
+        }
+      )
+
+      Text(viewModel.currentTimeString ?? "0:00:00.0")
+        .font(.system(.headline, design: .monospaced).monospacedDigit())
 
       HStack {
         Button(action: { viewModel.handle(.skipBackwards) }) {
@@ -189,10 +92,12 @@ extension ContentView: View {
           }
           .disabled(viewModel.currentPlayerState.isDisabled)
           .buttonStyle(ControlButton())
+
         } else {
           Button(action: { viewModel.handle(.pause) }) {
             Image(systemName: "pause.fill").foregroundColor(Color.white)
           }
+          .keyboardShortcut("P")
           .disabled(viewModel.currentPlayerState.isDisabled)
           .buttonStyle(ControlButton())
         }

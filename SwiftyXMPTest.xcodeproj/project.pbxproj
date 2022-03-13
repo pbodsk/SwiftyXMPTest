@@ -14,6 +14,7 @@
 		D0319FE82781EA6800CA7641 /* SwiftyXMP in Frameworks */ = {isa = PBXBuildFile; productRef = D0319FE72781EA6800CA7641 /* SwiftyXMP */; };
 		D0319FEA2781EA9C00CA7641 /* ModPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0319FE92781EA9C00CA7641 /* ModPlayer.swift */; };
 		D0319FEC2789E78300CA7641 /* ContentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0319FEB2789E78300CA7641 /* ContentViewModel.swift */; };
+		D062EFF527DE3D1800F4F352 /* ModInfoRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = D062EFF427DE3D1800F4F352 /* ModInfoRow.swift */; };
 		D074D4DE27B93E860095946F /* ControlButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = D074D4DD27B93E860095946F /* ControlButton.swift */; };
 		D074D4E027B940E50095946F /* ChannelButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = D074D4DF27B940E50095946F /* ChannelButton.swift */; };
 		D0AE8CF827945C4800DCC08A /* PlayerSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0AE8CF727945C4800DCC08A /* PlayerSettings.swift */; };
@@ -28,6 +29,7 @@
 		D0319FDE2781E7E300CA7641 /* SwiftyXMPTest.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SwiftyXMPTest.entitlements; sourceTree = "<group>"; };
 		D0319FE92781EA9C00CA7641 /* ModPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModPlayer.swift; sourceTree = "<group>"; };
 		D0319FEB2789E78300CA7641 /* ContentViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentViewModel.swift; sourceTree = "<group>"; };
+		D062EFF427DE3D1800F4F352 /* ModInfoRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModInfoRow.swift; sourceTree = "<group>"; };
 		D074D4DD27B93E860095946F /* ControlButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControlButton.swift; sourceTree = "<group>"; };
 		D074D4DF27B940E50095946F /* ChannelButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelButton.swift; sourceTree = "<group>"; };
 		D0AE8CF727945C4800DCC08A /* PlayerSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerSettings.swift; sourceTree = "<group>"; };
@@ -69,6 +71,7 @@
 				D0319FD52781E7E100CA7641 /* SwiftyXMPTestApp.swift */,
 				D0AE8CF727945C4800DCC08A /* PlayerSettings.swift */,
 				D0319FD72781E7E100CA7641 /* ContentView.swift */,
+				D062EFF427DE3D1800F4F352 /* ModInfoRow.swift */,
 				D0319FEB2789E78300CA7641 /* ContentViewModel.swift */,
 				D0319FE92781EA9C00CA7641 /* ModPlayer.swift */,
 				D0319FD92781E7E300CA7641 /* Assets.xcassets */,
@@ -185,6 +188,7 @@
 				D0319FEA2781EA9C00CA7641 /* ModPlayer.swift in Sources */,
 				D074D4E027B940E50095946F /* ChannelButton.swift in Sources */,
 				D0AE8CF827945C4800DCC08A /* PlayerSettings.swift in Sources */,
+				D062EFF527DE3D1800F4F352 /* ModInfoRow.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
