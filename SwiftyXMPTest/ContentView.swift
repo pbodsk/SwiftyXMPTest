@@ -23,8 +23,9 @@ extension ContentView: View {
           Spacer()
         }
 
-        ModInfoRow(title: "Name", content: viewModel.moduleName)
-        ModInfoRow(title: "Type", content: viewModel.type)
+        ForEach(viewModel.generalInfoItems, id: \.title) {
+          ModInfoRow(title: $0.title, content: $0.value)
+        }
       }
       .padding(.bottom, 10)
 
@@ -35,15 +36,9 @@ extension ContentView: View {
           Spacer()
         }
 
-        ModInfoRow(title: "Duration", content: viewModel.durationString)
-        ModInfoRow(title: "Length in Patterns", content: viewModel.lengthInPatterns)
-        ModInfoRow(title: "Number of Instruments", content: viewModel.numberOfInstruments)
-        ModInfoRow(title: "Number of Samples", content: viewModel.numberOfSamples)
-        ModInfoRow(title: "Number of Channels", content: viewModel.numberOfVirtuelChannels)
-        ModInfoRow(title: "Number of Rows", content: viewModel.numberOfRows)
-        ModInfoRow(title: "Number of Patterns", content: viewModel.numberOfPatterns)
-        ModInfoRow(title: "Number of Tracks", content: viewModel.numberOfTracks)
-        ModInfoRow(title: "Tracks per Pattern", content: viewModel.tracksPerPattern)
+        ForEach(viewModel.modInfoItems, id: \.title) {
+          ModInfoRow(title: $0.title, content: $0.value)
+        }
       }
       .padding(.bottom, 10.0)
 
@@ -53,16 +48,13 @@ extension ContentView: View {
             .font(.title2)
           Spacer()
         }
-        
-        ModInfoRow(title: "Row", content: viewModel.row)
-        ModInfoRow(title: "Position", content: viewModel.pos)
-        ModInfoRow(title: "Pattern", content: viewModel.pattern)
-        ModInfoRow(title: "Speed", content: viewModel.speed)
-        ModInfoRow(title: "Loop Count", content: viewModel.loopCount)
-        ModInfoRow(title: "Current Sequence", content: viewModel.currentSequence)
+
+        ForEach(viewModel.frameInfoItems, id: \.title) {
+          ModInfoRow(title: $0.title, content: $0.value)
+        }
       }
 
-
+      Spacer()
 
       Slider(
         value: $viewModel.currentTime,
@@ -149,8 +141,14 @@ extension ContentView: View {
         .disabled(viewModel.currentPlayerState.isDisabled)
         .buttonStyle(ChannelButton())
       }
-
     }
+    .frame(
+      minWidth: 200.0,
+      maxWidth: 700.0,
+      minHeight: 600.0,
+      maxHeight: 600.0,
+      alignment: .center
+    )
     .padding()
   }
 }

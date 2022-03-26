@@ -99,6 +99,11 @@ class ModPlayer {
   }
   private static var frameInfoSubject = PassthroughSubject<XMPFrameInfo, Never>()
 
+  public var modEndedPublisher: AnyPublisher<Bool, Never> {
+    ModPlayer.modEndedSubject.eraseToAnyPublisher()
+  }
+  private static var modEndedSubject = PassthroughSubject<Bool, Never>()
+
   init() {
     self.playerState = PlayerState(bufferByteSize: kQueueSize)
   }
@@ -282,7 +287,9 @@ class ModPlayer {
       let frameInfo = try ModPlayer.swiftyXMP.playFrame()
       ModPlayer.frameInfoSubject.send(frameInfo)
       if frameInfo.loopCount != 0 {
-        print("something here")
+        // the mod has ended
+        playerState.isRunning = false
+        ModPlayer.modEndedSubject.send(true)
         status = -1
       }
       inBuffer.pointee.mAudioData.copyMemory(from: frameInfo.buffer, byteCount: Int(frameInfo.bufferSize))
@@ -307,7 +314,9 @@ class ModPlayer {
       var frameInfo = try ModPlayer.swiftyXMP.playFrame()
       ModPlayer.frameInfoSubject.send(frameInfo)
       if frameInfo.loopCount != 0 {
-        print("something here")
+        // the mod has ended
+        playerState.isRunning = false
+        ModPlayer.modEndedSubject.send(true)
         status = -1
       }
       inBuffer.pointee.mAudioData.copyMemory(from: frameInfo.buffer, byteCount: Int(frameInfo.bufferSize))
@@ -322,6 +331,3 @@ class ModPlayer {
     }
   }
 }
-
-
-

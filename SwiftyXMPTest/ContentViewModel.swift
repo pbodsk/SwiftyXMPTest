@@ -11,8 +11,12 @@ import SwiftUI
 import SwiftyXMP
 import CoreAudio
 
-class ContentViewModel: ObservableObject {
+struct ModInfoItem {
+  let title: String
+  let value: String?
+}
 
+class ContentViewModel: ObservableObject {
   enum Action {
     case load
     case play
@@ -46,28 +50,14 @@ class ContentViewModel: ObservableObject {
   private var subscriptions = Set<AnyCancellable>()
   public var fileURL: URL?
 
-  @Published var moduleName: String?
-  @Published var type: String = ""
-  @Published var numberOfPatterns: String = ""
-  @Published var numberOfTracks: String = ""
-  @Published var tracksPerPattern: String = ""
-  @Published var numberOfInstruments: String = ""
-  @Published var numberOfSamples: String = ""
-  @Published var lengthInPatterns: String = ""
-  @Published var durationString: String?
-  @Published var currentTimeString: String?
+  @Published var generalInfoItems: [ModInfoItem] = []
+  @Published var modInfoItems: [ModInfoItem] = []
+  @Published var frameInfoItems: [ModInfoItem] = []
+
   @Published var totalTime: Double = 100.0
   @Published var currentTime: Double = 0.0
-  @Published var frameTime: String = ""
-  @Published var loopCount: String = ""
-  @Published var numberOfRows: String = ""
-  @Published var numberOfVirtuelChannels: String = ""
-  @Published var pattern: String = ""
-  @Published var pos: String = ""
-  @Published var row: String = ""
-  @Published var currentSequence: String = ""
-  @Published var speed: String = ""
-  @Published var virtuelChannelsUsed: String = ""
+
+  @Published var currentTimeString: String?
 
   @Published var channelOneState: ModPlayer.ChannelState = .unmuted
   @Published var channelTwoState: ModPlayer.ChannelState = .unmuted
@@ -84,18 +74,9 @@ class ContentViewModel: ObservableObject {
     modPlayer.moduleInfoPublisher
       .receive(on: DispatchQueue.main)
       .sink(receiveValue: { [weak self] moduleInfo in
-        self?.moduleName = moduleInfo.module.name
-        let durationMin = (moduleInfo.sequenceData.duration + 500) / 60000
-        let durationSec = ((moduleInfo.sequenceData.duration + 500) / 1000) % 60
-        self?.durationString = String(format: "%02d:%02d", durationMin, durationSec)
+        self?.populateGeneralModInfoItems(from: moduleInfo)
+        self?.populateModInfoItems(from: moduleInfo)
         self?.totalTime = Double(moduleInfo.sequenceData.duration)
-        self?.type = moduleInfo.module.type
-        self?.numberOfPatterns = String(moduleInfo.module.numberOfPatterns)
-        self?.numberOfTracks = String(moduleInfo.module.numberOfTracks)
-        self?.tracksPerPattern = String(moduleInfo.module.tracksPerPattern)
-        self?.numberOfInstruments = String(moduleInfo.module.numberOfInstruments)
-        self?.numberOfSamples = String(moduleInfo.module.numberOfSamples)
-        self?.lengthInPatterns = String(moduleInfo.module.lengthInPatterns)
       })
       .store(in: &subscriptions)
 
@@ -110,18 +91,54 @@ class ContentViewModel: ObservableObject {
 
         self?.currentTimeString = String(format: "%3d:%02d:%02d.%d", hours, minutes, seconds, miliseconds)
         self?.currentTime = Double(frameInfo.time)
-        self?.frameTime = String(frameInfo.frameTime)
-        self?.loopCount = String(frameInfo.loopCount)
-        self?.numberOfRows = String(frameInfo.numberOfRows)
-        self?.numberOfVirtuelChannels = String(frameInfo.numberOfVirtuelChannels)
-        self?.pattern = String(frameInfo.pattern)
-        self?.pos = String(frameInfo.pos)
-        self?.row = String(frameInfo.row)
-        self?.currentSequence = String(frameInfo.currentSequence)
-        self?.speed = String(frameInfo.speed)
-        self?.virtuelChannelsUsed = String(frameInfo.virtuelChannelsUsed)
+
+        self?.populateTimeInfo(from: frameInfo)
+
       })
       .store(in: &subscriptions)
+
+    modPlayer.modEndedPublisher
+      .receive(on: DispatchQueue.main)
+      .sink(receiveValue: {[weak self] modEnded in
+        if modEnded {
+          self?.handle(.stop)
+        }
+      })
+      .store(in: &subscriptions)
+  }
+
+  private func populateGeneralModInfoItems(from moduleInfo: XMPModuleInfo) {
+    generalInfoItems.removeAll()
+    generalInfoItems.append(.init(title: "Name", value: moduleInfo.module.name))
+    generalInfoItems.append(.init(title: "Type", value: moduleInfo.module.type))
+  }
+
+  private func populateModInfoItems(from moduleInfo: XMPModuleInfo) {
+    modInfoItems.removeAll()
+
+    let durationMin = (moduleInfo.sequenceData.duration + 500) / 60000
+    let durationSec = ((moduleInfo.sequenceData.duration + 500) / 1000) % 60
+
+    modInfoItems.append(.init(title: "Duration", value: String(format: "%02d:%02d", durationMin, durationSec)))
+    modInfoItems.append(.init(title: "Length in Patterns", value: String(moduleInfo.module.lengthInPatterns)))
+    modInfoItems.append(.init(title: "Number of Instruments", value: String(moduleInfo.module.numberOfInstruments)))
+    modInfoItems.append(.init(title: "Number of Samples", value: String(moduleInfo.module.numberOfSamples)))
+    modInfoItems.append(.init(title: "Number of Patterns", value: String(moduleInfo.module.numberOfPatterns)))
+    modInfoItems.append(.init(title: "Number of Tracks", value: String(moduleInfo.module.numberOfTracks)))
+    modInfoItems.append(.init(title: "Tracks per Pattern", value: String(moduleInfo.module.tracksPerPattern)))
+  }
+
+  func populateTimeInfo(from frameInfo: XMPFrameInfo) {
+    frameInfoItems.removeAll()
+
+    frameInfoItems.append(.init(title: "Row", value: String(frameInfo.row)))
+    frameInfoItems.append(.init(title: "Position", value: String(frameInfo.pos)))
+    frameInfoItems.append(.init(title: "Pattern", value: String(frameInfo.pattern)))
+    frameInfoItems.append(.init(title: "Speed", value: String(frameInfo.speed)))
+    frameInfoItems.append(.init(title: "Loop Count", value: String(frameInfo.loopCount)))
+    frameInfoItems.append(.init(title: "Current Sequence", value: String(frameInfo.currentSequence)))
+    frameInfoItems.append(.init(title: "Number of Channels", value: String(frameInfo.virtuelChannelsUsed)))
+    frameInfoItems.append(.init(title: "Number of Rows", value: String(frameInfo.numberOfRows)))
   }
 
   func handle(_ action: Action) {
@@ -215,28 +232,13 @@ class ContentViewModel: ObservableObject {
   }
 
   private func clearUI() {
-    moduleName = ""
-    type = ""
-    numberOfPatterns = ""
-    numberOfTracks = ""
-    tracksPerPattern = ""
-    numberOfInstruments = ""
-    numberOfSamples = ""
-    lengthInPatterns = ""
-    durationString = ""
     currentTimeString = nil
     totalTime = 100.0
     currentTime = 0.0
-    frameTime = ""
-    loopCount = ""
-    numberOfRows = ""
-    numberOfVirtuelChannels = ""
-    pattern = ""
-    pos = ""
-    row = ""
-    currentSequence = ""
-    speed = ""
-    virtuelChannelsUsed = ""
+
+    generalInfoItems.removeAll()
+    modInfoItems.removeAll()
+    frameInfoItems.removeAll()
   }
 
   var showPlayButton: Bool {
