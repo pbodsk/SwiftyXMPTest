@@ -18,6 +18,7 @@
 		D074D4DE27B93E860095946F /* ControlButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = D074D4DD27B93E860095946F /* ControlButton.swift */; };
 		D074D4E027B940E50095946F /* ChannelButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = D074D4DF27B940E50095946F /* ChannelButton.swift */; };
 		D0AE8CF827945C4800DCC08A /* PlayerSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0AE8CF727945C4800DCC08A /* PlayerSettings.swift */; };
+		D0D2F5AB27EF68E800C0853E /* ControlsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0D2F5AA27EF68E800C0853E /* ControlsView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -33,6 +34,7 @@
 		D074D4DD27B93E860095946F /* ControlButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControlButton.swift; sourceTree = "<group>"; };
 		D074D4DF27B940E50095946F /* ChannelButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelButton.swift; sourceTree = "<group>"; };
 		D0AE8CF727945C4800DCC08A /* PlayerSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerSettings.swift; sourceTree = "<group>"; };
+		D0D2F5AA27EF68E800C0853E /* ControlsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControlsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -67,11 +69,10 @@
 		D0319FD42781E7E100CA7641 /* SwiftyXMPTest */ = {
 			isa = PBXGroup;
 			children = (
+				D0D2F5A927EF68CD00C0853E /* Views */,
 				D074D4DC27B93E690095946F /* Styling */,
 				D0319FD52781E7E100CA7641 /* SwiftyXMPTestApp.swift */,
 				D0AE8CF727945C4800DCC08A /* PlayerSettings.swift */,
-				D0319FD72781E7E100CA7641 /* ContentView.swift */,
-				D062EFF427DE3D1800F4F352 /* ModInfoRow.swift */,
 				D0319FEB2789E78300CA7641 /* ContentViewModel.swift */,
 				D0319FE92781EA9C00CA7641 /* ModPlayer.swift */,
 				D0319FD92781E7E300CA7641 /* Assets.xcassets */,
@@ -103,6 +104,16 @@
 				D074D4DF27B940E50095946F /* ChannelButton.swift */,
 			);
 			path = Styling;
+			sourceTree = "<group>";
+		};
+		D0D2F5A927EF68CD00C0853E /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				D062EFF427DE3D1800F4F352 /* ModInfoRow.swift */,
+				D0319FD72781E7E100CA7641 /* ContentView.swift */,
+				D0D2F5AA27EF68E800C0853E /* ControlsView.swift */,
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -182,6 +193,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D0319FEC2789E78300CA7641 /* ContentViewModel.swift in Sources */,
+				D0D2F5AB27EF68E800C0853E /* ControlsView.swift in Sources */,
 				D0319FD82781E7E100CA7641 /* ContentView.swift in Sources */,
 				D0319FD62781E7E100CA7641 /* SwiftyXMPTestApp.swift in Sources */,
 				D074D4DE27B93E860095946F /* ControlButton.swift in Sources */,

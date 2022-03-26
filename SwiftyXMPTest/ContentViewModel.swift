@@ -16,6 +16,13 @@ struct ModInfoItem {
   let value: String?
 }
 
+struct ChannelItem: Identifiable {
+  let id: UUID = UUID()
+  let index: Int
+  let title: String
+  var state: ModPlayer.ChannelState
+}
+
 class ContentViewModel: ObservableObject {
   enum Action {
     case load
@@ -24,7 +31,7 @@ class ContentViewModel: ObservableObject {
     case stop
     case skipForwards
     case skipBackwards
-    case toggleMute(channel: Int)
+    case toggleMuteFor(channelID: UUID)
     case updatePositionStart
     case updatePositionStop
   }
@@ -53,17 +60,12 @@ class ContentViewModel: ObservableObject {
   @Published var generalInfoItems: [ModInfoItem] = []
   @Published var modInfoItems: [ModInfoItem] = []
   @Published var frameInfoItems: [ModInfoItem] = []
+  @Published var channels: [ChannelItem] = []
 
   @Published var totalTime: Double = 100.0
   @Published var currentTime: Double = 0.0
 
   @Published var currentTimeString: String?
-
-  @Published var channelOneState: ModPlayer.ChannelState = .unmuted
-  @Published var channelTwoState: ModPlayer.ChannelState = .unmuted
-  @Published var channelThreeState: ModPlayer.ChannelState = .unmuted
-  @Published var channelFourState: ModPlayer.ChannelState = .unmuted
-
   @Published var currentPlayerState: PlayerState
 
   private var isUpdatingPosition = false
@@ -139,6 +141,18 @@ class ContentViewModel: ObservableObject {
     frameInfoItems.append(.init(title: "Current Sequence", value: String(frameInfo.currentSequence)))
     frameInfoItems.append(.init(title: "Number of Channels", value: String(frameInfo.virtuelChannelsUsed)))
     frameInfoItems.append(.init(title: "Number of Rows", value: String(frameInfo.numberOfRows)))
+
+    if channels.count != frameInfo.numberOfVirtuelChannels {
+      print("channels: \(channels.count) - virtuelChannelsUsed: \(frameInfo.virtuelChannelsUsed) - numberOfVirtualChannels: \(frameInfo.numberOfVirtuelChannels)")
+      channels.removeAll()
+      for i in 0..<frameInfo.numberOfVirtuelChannels {
+        channels.append(.init(
+          index: Int(i),
+          title: "\(i + 1)",
+          state: .unmuted)
+        )
+      }
+    }
   }
 
   func handle(_ action: Action) {
@@ -182,41 +196,11 @@ class ContentViewModel: ObservableObject {
       modPlayer.updateProgress(newValue: currentTime)
       modPlayer.resume()
       isUpdatingPosition = false
-    case .toggleMute(channel: let channel):
-      switch channel {
-      case 0:
-        do {
-          if let updatedState = try modPlayer.changeState(for: channel, to: channelOneState.toggled) {
-            channelOneState = updatedState
-          }
-        } catch {
-          print("error")
+    case .toggleMuteFor(channelID: let channelID):
+      if let channelIndex = channels.firstIndex(where: { $0.id == channelID}) {
+        if let updatedState = try? modPlayer.changeState(for: channels[channelIndex].index, to: channels[channelIndex].state.toggled) {
+          channels[channelIndex].state = updatedState
         }
-      case 1:
-        do {
-          if let newState = try modPlayer.changeState(for: channel, to: channelTwoState.toggled) {
-            channelTwoState = newState
-          }
-        } catch {
-          print("error")
-        }
-      case 2:
-        do {
-          if let newState = try modPlayer.changeState(for: channel, to: channelThreeState.toggled) {
-            channelThreeState = newState
-          }
-        } catch {
-          print("error")
-        }
-      case 3:
-        do {
-          if let newState = try modPlayer.changeState(for: channel, to: channelFourState.toggled) {
-            channelFourState = newState
-          }
-        } catch {
-          print("error")
-        }
-      default: break
       }
     }
   }
@@ -239,6 +223,7 @@ class ContentViewModel: ObservableObject {
     generalInfoItems.removeAll()
     modInfoItems.removeAll()
     frameInfoItems.removeAll()
+    channels.removeAll()
   }
 
   var showPlayButton: Bool {
