@@ -119,7 +119,6 @@ class ModPlayer {
       stopPlayer()
     }
     playerIsInitialized = false
-    //self.playerState = nil
   }
 
   private func stopPlayer() {

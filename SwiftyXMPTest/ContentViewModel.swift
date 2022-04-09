@@ -143,7 +143,6 @@ class ContentViewModel: ObservableObject {
     frameInfoItems.append(.init(title: "Number of Rows", value: String(frameInfo.numberOfRows)))
 
     if channels.count != frameInfo.numberOfVirtuelChannels {
-      print("channels: \(channels.count) - virtuelChannelsUsed: \(frameInfo.virtuelChannelsUsed) - numberOfVirtualChannels: \(frameInfo.numberOfVirtuelChannels)")
       channels.removeAll()
       for i in 0..<frameInfo.numberOfVirtuelChannels {
         channels.append(.init(
