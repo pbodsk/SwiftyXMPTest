@@ -9,8 +9,8 @@ import UniformTypeIdentifiers
 import SwiftUI
 
 struct ContentView {
-  @ObservedObject var viewModel = ContentViewModel()
-  @ObservedObject var playerSettings: PlayerSettings
+  @StateObject var viewModel = ContentViewModel()
+  @State var playerSettings: PlayerSettings
 }
 
 extension ContentView: View {

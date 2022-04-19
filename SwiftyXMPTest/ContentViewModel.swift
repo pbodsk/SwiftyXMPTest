@@ -69,6 +69,8 @@ class ContentViewModel: ObservableObject {
   @Published var currentPlayerState: PlayerState
 
   private var isUpdatingPosition = false
+  private var lastUpdate: Int32? = nil
+  private var currentRow: Int32? = nil
 
   init() {
     currentPlayerState = .stopped
@@ -85,17 +87,14 @@ class ContentViewModel: ObservableObject {
     modPlayer.frameInfoPublisher
       .receive(on: DispatchQueue.main)
       .sink(receiveValue: { [weak self] frameInfo in
-        let normalizedTime = frameInfo.time / 100
-        let hours = (normalizedTime / (60 * 600))
-        let minutes = (normalizedTime / 600) % 60
-        let seconds = (normalizedTime / 10) % 60
-        let miliseconds = normalizedTime % 10
-
-        self?.currentTimeString = String(format: "%3d:%02d:%02d.%d", hours, minutes, seconds, miliseconds)
-        self?.currentTime = Double(frameInfo.time)
-
-        self?.populateTimeInfo(from: frameInfo)
-
+        guard let self = self else { return }
+        if self.lastUpdate == nil {
+          self.updateFromFrameInfo(frameInfo)
+        } else {
+          if frameInfo.time - self.lastUpdate! > 200 || self.currentRow != frameInfo.row  {
+            self.updateFromFrameInfo(frameInfo)
+          }
+        }
       })
       .store(in: &subscriptions)
 
@@ -107,6 +106,20 @@ class ContentViewModel: ObservableObject {
         }
       })
       .store(in: &subscriptions)
+  }
+
+  private func updateFromFrameInfo(_ frameInfo: XMPFrameInfo) {
+    let normalizedTime = frameInfo.time / 100
+    let hours = (normalizedTime / (60 * 600))
+    let minutes = (normalizedTime / 600) % 60
+    let seconds = (normalizedTime / 10) % 60
+    let miliseconds = normalizedTime % 10
+    currentTimeString = String(format: "%3d:%02d:%02d.%d", hours, minutes, seconds, miliseconds)
+
+    currentTime = Double(frameInfo.time)
+    populateTimeInfo(from: frameInfo)
+    lastUpdate = frameInfo.time
+    currentRow = frameInfo.row
   }
 
   private func populateGeneralModInfoItems(from moduleInfo: XMPModuleInfo) {
