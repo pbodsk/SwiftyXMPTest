@@ -1,16 +1,14 @@
 {
-  "object": {
-    "pins": [
-      {
-        "package": "SwiftyXMP",
-        "repositoryURL": "https://github.com/pbodsk/swifty-xmp",
-        "state": {
-          "branch": "main",
-          "revision": "830e9ed885d0d5f7efcd1a98f31d3a319da76961",
-          "version": null
-        }
+  "pins" : [
+    {
+      "identity" : "swifty-xmp",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/pbodsk/swifty-xmp",
+      "state" : {
+        "branch" : "main",
+        "revision" : "96dd25c461f13b38c7a7adbf717712f0dff2c2ee"
       }
-    ]
-  },
-  "version": 1
+    }
+  ],
+  "version" : 2
 }
